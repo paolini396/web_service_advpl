@@ -17,15 +17,15 @@ WSMethod GET WSService Customers
 
 	Local oResponse        := Nil as object
 
-  Local oCustomerService :=  Nil as object
-  Local oCustomerData    := Nil as Object
+	Local oCustomerService :=  Nil as object
+	Local oCustomerData    := Nil as Object
 
 	Local lParsedAllPage   := .F. as logical
 	Local cParsedSearch    := "" as character
 	Local nParsedPage      := 1 as numeric
 	Local nParsedPerPage   := 50 as numeric
 	Local cParsedStore     := "" as character
-  Local cParsedId        := "" as character
+	Local cParsedId        := "" as character
 
 	Private cError         := "" as character
 	Private bError         := ErrorBlock({ |oError| cError := oError:Description}) as codeblock
@@ -38,33 +38,34 @@ WSMethod GET WSService Customers
 
 	begin sequence
 
-    lParsedAllPage := if(::all_page == "true", .T. , .F.)
-    cParsedSearch  := Upper(AllTrim(::search))
-    nParsedPage    := Val(::page)
-    nParsedPerPage := Val(::per_page)
-    cParsedStore   := AllTrim(::store)
-    cParsedId      := if(Len(::aURLParms) > 0, ::aURLParms[1], "")
-
-    oCustomerService :=  TCustomerService():New()
-
-    if !Empty(cParsedId)
-
-      oCustomerData := oCustomerService:Show(cId, cStore)
-
-    else
-
-      oCustomerData := oCustomerService:List(cSearch, nPage, nPerPage, lAllPage)
-      
-    endif
-
-    oModel := TCustomerModel():New()
+		lParsedAllPage := if(::all_page == "true", .T. , .F.)
+		cParsedSearch  := Upper(AllTrim(::search))
+		nParsedPage    := Val(::page)
+		nParsedPerPage := Val(::per_page)
+		cParsedStore   := AllTrim(::store)
+		cParsedId      := if(Len(::aURLParms) > 0, ::aURLParms[1], "")
 
 		oResponse := JsonObject():New()
-    oResponse["page"] := oCustomerData["page"]
+		oResponse["page"] := oCustomerData["page"]
 		oResponse["per_page"] := oCustomerData["per_page"]
 		oResponse["total"] := oCustomerData["total"]
 		oResponse["last_page"] := oCustomerData["last_page"]
-    oResponse["data"] := if(!Empty(cParsedId), oModel:SanitizeResponseToShow(oCustomerData["data"]), oModel:SanitizeResponseToList(oCustomerData["data"]))
+		oResponse["data"] := {}
+
+		oCustomerService :=  TCustomerService():New()
+		oModel := TCustomerModel():New()
+
+		if !Empty(cParsedId)
+
+			oCustomerData := oCustomerService:Show(cId, cStore)
+			oResponse["data"] := oModel:SanitizeResponseToShow(oCustomerData["data"])
+
+		else
+
+			oCustomerData := oCustomerService:List(cSearch, nPage, nPerPage, lAllPage)
+			oResponse["data"] := oModel:SanitizeResponseToList(oCustomerData["data"])
+
+		endif
 
 	end sequence
 

@@ -1,17 +1,16 @@
 #INCLUDE 'TOTVS.CH'
 #INCLUDE 'TOPCONN.CH'
 
-/*/{Protheus.doc} TCustomerModel::New
+/*/{Protheus.doc} TCustomerModel
   Modelo de dados da classe
   @type class
-  @author Gabriel Paolini - Facile Sistemas
+  @author Gabriel Paolini
   @since 21/03/2022
   @version 1.0
   /*/
 
 Class TCustomerModel
 //                                             CAMPO              VALOR
-	Public Data cIliotId as character             // Criar campo customizado no Cliente Campo ID ILIOT
 	Public Data cBranchCode as character          // A1_FILIAL
 	Public Data cCode as character                // A1_COD
 	Public Data cStore as character               // A1_LOJA
@@ -56,13 +55,6 @@ Class TCustomerModel
 
 EndClass
 
-/*/{Protheus.doc} TCustomerModel::New
-  Método construtor da classe
-  @type method
-  @author Gabriel Paolini - Facile Sistemas
-  @since 21/03/2022
-  @version 1.0
-  /*/
 Method New() Class TCustomerModel
 
 	::cIliotId             := ""
@@ -113,18 +105,30 @@ Method SanitizeResponseToList(oCustomers as object) Class TCustomerModel
 
 	Local aSanitizedModel := {} as array
 
-	for nIndexCustomer := 1 to oCustomers:GetCount()
+	begin sequence
 
-		oCustomerJson := JsonObject():New()
+		for nIndexCustomer := 1 to oCustomers:GetCount()
 
-		oCustomerJson["id"]         := oCustomerData["data"]:GetItem(nIndexCustomer):cCode
-		oCustomerJson["store"]      := oCustomerData["data"]:GetItem(nIndexCustomer):cStore
-		oCustomerJson["first_name"] := oCustomerData["data"]:GetItem(nIndexCustomer):cFirstName
-		oCustomerJson["cpf_cnpj"]   := oCustomerData["data"]:GetItem(nIndexCustomer):cCpfCnpj
+			oCustomerJson := JsonObject():New()
 
-		aAdd(aSanitizedModel, oCustomerJson)
+			oCustomerJson["id"]         := oCustomerData["data"]:GetItem(nIndexCustomer):cCode
+			oCustomerJson["store"]      := oCustomerData["data"]:GetItem(nIndexCustomer):cStore
+			oCustomerJson["first_name"] := oCustomerData["data"]:GetItem(nIndexCustomer):cFirstName
+			oCustomerJson["cpf_cnpj"]   := oCustomerData["data"]:GetItem(nIndexCustomer):cCpfCnpj
 
-	next nIndexCustomer
+			aAdd(aSanitizedModel, oCustomerJson)
+
+		next nIndexCustomer
+
+	end sequence
+
+	if !Empty(cError)
+
+		RestArea(aArea)
+
+		break
+
+	endif
 
 Return(aSanitizedModel)
 
@@ -136,45 +140,56 @@ Method SanitizeResponseToShow(oCustomers as object) Class TCustomerModel
 
 	Local aSanitizedModel := {} as array
 
-	for nIndexCustomer := 1 to oCustomers:GetCount()
+	begin sequence
 
-		oCustomerJson := JsonObject():New()
+		for nIndexCustomer := 1 to oCustomers:GetCount()
 
-		oCustomerJson["store"]                := oCustomerData["data"]:GetItem(nIndexCustomer):cStore
-		oCustomerJson["first_name"]           := oCustomerData["data"]:GetItem(nIndexCustomer):cFirstName
-		oCustomerJson["person_type"]          := oCustomerData["data"]:GetItem(nIndexCustomer):cPersonType
-		oCustomerJson["type"]                 := oCustomerData["data"]:GetItem(nIndexCustomer):cType
-		oCustomerJson["last_name"]            := oCustomerData["data"]:GetItem(nIndexCustomer):cLastName
-		oCustomerJson["cpf_cnpj"]             := oCustomerData["data"]:GetItem(nIndexCustomer):cCpfCnpj
-		oCustomerJson["address"]              := oCustomerData["data"]:GetItem(nIndexCustomer):cAddress
-		oCustomerJson["neighborhood"]         := oCustomerData["data"]:GetItem(nIndexCustomer):cNeighborhood
-		oCustomerJson["state"]                := oCustomerData["data"]:GetItem(nIndexCustomer):cState
-		oCustomerJson["zip_code"]             := oCustomerData["data"]:GetItem(nIndexCustomer):cZipCode
-		oCustomerJson["city_id"]              := oCustomerData["data"]:GetItem(nIndexCustomer):cCityId
-		oCustomerJson["credit_limit"]         := oCustomerData["data"]:GetItem(nIndexCustomer):nCreditLimit
-		oCustomerJson["risk_level"]           := oCustomerData["data"]:GetItem(nIndexCustomer):cRiskLevel
-		oCustomerJson["complement"]           := oCustomerData["data"]:GetItem(nIndexCustomer):cComplement
-		oCustomerJson["ddd"]                  := oCustomerData["data"]:GetItem(nIndexCustomer):cDDD
-		oCustomerJson["phone"]                := oCustomerData["data"]:GetItem(nIndexCustomer):cPhone
-		oCustomerJson["city"]                 := oCustomerData["data"]:GetItem(nIndexCustomer):cCity
-		oCustomerJson["fax"]                  := oCustomerData["data"]:GetItem(nIndexCustomer):cFax
-		oCustomerJson["contact"]              := oCustomerData["data"]:GetItem(nIndexCustomer):cContact
-		oCustomerJson["billing_address"]      := oCustomerData["data"]:GetItem(nIndexCustomer):cBillingAddress
-		oCustomerJson["billing_state"]        := oCustomerData["data"]:GetItem(nIndexCustomer):cBillingState
-		oCustomerJson["billing_city"]         := oCustomerData["data"]:GetItem(nIndexCustomer):cBillingCity
-		oCustomerJson["billing_neighborhood"] := oCustomerData["data"]:GetItem(nIndexCustomer):cBillingNeighborhood
-		oCustomerJson["billing_zip_code"]     := oCustomerData["data"]:GetItem(nIndexCustomer):cBillingZipCode
-		oCustomerJson["is_taxpayer"]          := oCustomerData["data"]:GetItem(nIndexCustomer):lIsTaxpayer
-		oCustomerJson["is_zero_hunger"]       := oCustomerData["data"]:GetItem(nIndexCustomer):lIsZeroHunger
-		oCustomerJson["country_code"]         := oCustomerData["data"]:GetItem(nIndexCustomer):cCountryCode
-		oCustomerJson["state_inscription"]    := oCustomerData["data"]:GetItem(nIndexCustomer):cStateInscription
-		oCustomerJson["city_inscription"]     := oCustomerData["data"]:GetItem(nIndexCustomer):cCityInscription
-		oCustomerJson["email"]                := oCustomerData["data"]:GetItem(nIndexCustomer):cEmail
+			oCustomerJson := JsonObject():New()
 
-		aAdd(aSanitizedModel, oCustomerJson)
+			oCustomerJson["store"]                := oCustomerData["data"]:GetItem(nIndexCustomer):cStore
+			oCustomerJson["first_name"]           := oCustomerData["data"]:GetItem(nIndexCustomer):cFirstName
+			oCustomerJson["person_type"]          := oCustomerData["data"]:GetItem(nIndexCustomer):cPersonType
+			oCustomerJson["type"]                 := oCustomerData["data"]:GetItem(nIndexCustomer):cType
+			oCustomerJson["last_name"]            := oCustomerData["data"]:GetItem(nIndexCustomer):cLastName
+			oCustomerJson["cpf_cnpj"]             := oCustomerData["data"]:GetItem(nIndexCustomer):cCpfCnpj
+			oCustomerJson["address"]              := oCustomerData["data"]:GetItem(nIndexCustomer):cAddress
+			oCustomerJson["neighborhood"]         := oCustomerData["data"]:GetItem(nIndexCustomer):cNeighborhood
+			oCustomerJson["state"]                := oCustomerData["data"]:GetItem(nIndexCustomer):cState
+			oCustomerJson["zip_code"]             := oCustomerData["data"]:GetItem(nIndexCustomer):cZipCode
+			oCustomerJson["city_id"]              := oCustomerData["data"]:GetItem(nIndexCustomer):cCityId
+			oCustomerJson["credit_limit"]         := oCustomerData["data"]:GetItem(nIndexCustomer):nCreditLimit
+			oCustomerJson["risk_level"]           := oCustomerData["data"]:GetItem(nIndexCustomer):cRiskLevel
+			oCustomerJson["complement"]           := oCustomerData["data"]:GetItem(nIndexCustomer):cComplement
+			oCustomerJson["ddd"]                  := oCustomerData["data"]:GetItem(nIndexCustomer):cDDD
+			oCustomerJson["phone"]                := oCustomerData["data"]:GetItem(nIndexCustomer):cPhone
+			oCustomerJson["city"]                 := oCustomerData["data"]:GetItem(nIndexCustomer):cCity
+			oCustomerJson["fax"]                  := oCustomerData["data"]:GetItem(nIndexCustomer):cFax
+			oCustomerJson["contact"]              := oCustomerData["data"]:GetItem(nIndexCustomer):cContact
+			oCustomerJson["billing_address"]      := oCustomerData["data"]:GetItem(nIndexCustomer):cBillingAddress
+			oCustomerJson["billing_state"]        := oCustomerData["data"]:GetItem(nIndexCustomer):cBillingState
+			oCustomerJson["billing_city"]         := oCustomerData["data"]:GetItem(nIndexCustomer):cBillingCity
+			oCustomerJson["billing_neighborhood"] := oCustomerData["data"]:GetItem(nIndexCustomer):cBillingNeighborhood
+			oCustomerJson["billing_zip_code"]     := oCustomerData["data"]:GetItem(nIndexCustomer):cBillingZipCode
+			oCustomerJson["is_taxpayer"]          := oCustomerData["data"]:GetItem(nIndexCustomer):lIsTaxpayer
+			oCustomerJson["is_zero_hunger"]       := oCustomerData["data"]:GetItem(nIndexCustomer):lIsZeroHunger
+			oCustomerJson["country_code"]         := oCustomerData["data"]:GetItem(nIndexCustomer):cCountryCode
+			oCustomerJson["state_inscription"]    := oCustomerData["data"]:GetItem(nIndexCustomer):cStateInscription
+			oCustomerJson["city_inscription"]     := oCustomerData["data"]:GetItem(nIndexCustomer):cCityInscription
+			oCustomerJson["email"]                := oCustomerData["data"]:GetItem(nIndexCustomer):cEmail
 
-	next nIndexCustomer
+			aAdd(aSanitizedModel, oCustomerJson)
 
+		next nIndexCustomer
+
+	end sequence
+
+	if !Empty(cError)
+
+		RestArea(aArea)
+
+		break
+
+	endif
 
 Return(aSanitizedModel)
 
