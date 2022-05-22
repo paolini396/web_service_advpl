@@ -1,0 +1,180 @@
+#INCLUDE 'TOTVS.CH'
+#INCLUDE 'TOPCONN.CH'
+
+/*/{Protheus.doc} TCustomerModel::New
+  Modelo de dados da classe
+  @type class
+  @author Gabriel Paolini - Facile Sistemas
+  @since 21/03/2022
+  @version 1.0
+  /*/
+
+Class TCustomerModel
+//                                             CAMPO              VALOR
+	Public Data cIliotId as character             // Criar campo customizado no Cliente Campo ID ILIOT
+	Public Data cBranchCode as character          // A1_FILIAL
+	Public Data cCode as character                // A1_COD
+	Public Data cStore as character               // A1_LOJA
+	Public Data cFirstName as character           // A1_NOME
+	Public Data cPersonType as character          // A1_PESSOA
+	Public Data cType as character                // A1_TIPO
+	Public Data cLastName as character            // A1_NREDUZ
+	Public Data cAddress as character             // A1_END
+	Public Data cNeighborhood as character        // A1_BAIRRO
+	Public Data cComplement as character          // A1_COMPLEM
+	Public Data cState as character               // A1_EST
+	Public Data cZipCode as character             // A1_CEP
+	Public Data cCityId as character              // A1_COD_MUN
+	Public Data cCity as character                // A1_MUN
+	Public Data cDDD as character                 // A1_DDD
+	Public Data cPhone as character               // A1_TEL
+	Public Data cFax as character                 // A1_FAX
+	Public Data cContact as character             // A1_CONTATO
+	Public Data cBillingAddress as character      // A1_ENDCOB
+	Public Data cBillingState as character        // A1_ESTC
+	Public Data cBillingCity as character         // A1_MUNC
+	Public Data cBillingNeighborhood as character // A1_MUNC
+	Public Data cBillingZipCode as character      // A1_CEPC
+	Public Data lIsTaxpayer as logical            // A1_CONTRIB       1 - SIM 2 - NÃO
+	Public Data lIsZeroHunger as logical          // A1_FOMEZER       1 - SIM 2 - NÃO
+	Public Data cCountryCode as character         // A1_CODPAIS
+	Public Data cSegment as character             // A1_SATIV1
+	Public Data nCreditLimit as numeric           // A1_LC
+	Public Data cRiskLevel as character           // A1_RISCO
+	Public Data cSuframaCode as character         // A1_SUFRAMA
+	Public Data cCpfCnpj as character             // A1_CGC
+	Public Data cRg as character                  // A1_PFISICA
+	Public Data cStateInscription as character    // A1_INSCR
+	Public Data cCityInscription as character     // A1_INSCRM
+	Public Data cEmail as character               // A1_EMAIL
+	Public Data cDivision as character            // A1_YDVSAO
+	Public Data aErrors as array
+
+	Public Method New() Constructor
+	Public Method SanitizeResponseToList()
+	Public Method SanitizeResponseToShow()
+
+EndClass
+
+/*/{Protheus.doc} TCustomerModel::New
+  Método construtor da classe
+  @type method
+  @author Gabriel Paolini - Facile Sistemas
+  @since 21/03/2022
+  @version 1.0
+  /*/
+Method New() Class TCustomerModel
+
+	::cIliotId             := ""
+	::cBranchCode          := ""
+	::cCode                := ""
+	::cStore               := ""
+	::cFirstName           := ""
+	::cPersonType          := ""
+	::cType                := ""
+	::cLastName            := ""
+	::cAddress             := ""
+	::cNeighborhood        := ""
+	::cComplement          := ""
+	::cState               := ""
+	::cZipCode             := ""
+	::cCityId              := ""
+	::cCity                := ""
+	::cDDD                 := ""
+	::cPhone               := ""
+	::cFax                 := ""
+	::cContact             := ""
+	::cBillingAddress      := ""
+	::cBillingState        := ""
+	::cBillingCity         := ""
+	::cBillingNeighborhood := ""
+	::cBillingZipCode      := ""
+	::lIsTaxpayer          := .F.
+	::lIsZeroHunger        := .F.
+	::cCountryCode         := ""
+	::cSegment             := ""
+	::nCreditLimit         := 0
+	::cRiskLevel           := ""
+	::cSuframaCode         := ""
+	::cCpfCnpj             := ""
+	::cRg                  := ""
+	::cStateInscription    := ""
+	::cCityInscription     := ""
+	::cEmail               := ""
+	::cDivision            := ""
+	::aErrors              := {}
+
+Return
+
+Method SanitizeResponseToList(oCustomers as object) Class TCustomerModel
+
+	Local oCustomerJson := nil as object
+	Local nIndexCustomer :=  0 as numeric
+
+	Local aSanitizedModel := {} as array
+
+	for nIndexCustomer := 1 to oCustomers:GetCount()
+
+		oCustomerJson := JsonObject():New()
+
+		oCustomerJson["id"]         := oCustomerData["data"]:GetItem(nIndexCustomer):cCode
+		oCustomerJson["store"]      := oCustomerData["data"]:GetItem(nIndexCustomer):cStore
+		oCustomerJson["first_name"] := oCustomerData["data"]:GetItem(nIndexCustomer):cFirstName
+		oCustomerJson["cpf_cnpj"]   := oCustomerData["data"]:GetItem(nIndexCustomer):cCpfCnpj
+
+		aAdd(aSanitizedModel, oCustomerJson)
+
+	next nIndexCustomer
+
+Return(aSanitizedModel)
+
+
+Method SanitizeResponseToShow(oCustomers as object) Class TCustomerModel
+
+	Local oCustomerJson := nil as object
+	Local nIndexCustomer :=  0 as numeric
+
+	Local aSanitizedModel := {} as array
+
+	for nIndexCustomer := 1 to oCustomers:GetCount()
+
+		oCustomerJson := JsonObject():New()
+
+		oCustomerJson["store"]                := oCustomerData["data"]:GetItem(nIndexCustomer):cStore
+		oCustomerJson["first_name"]           := oCustomerData["data"]:GetItem(nIndexCustomer):cFirstName
+		oCustomerJson["person_type"]          := oCustomerData["data"]:GetItem(nIndexCustomer):cPersonType
+		oCustomerJson["type"]                 := oCustomerData["data"]:GetItem(nIndexCustomer):cType
+		oCustomerJson["last_name"]            := oCustomerData["data"]:GetItem(nIndexCustomer):cLastName
+		oCustomerJson["cpf_cnpj"]             := oCustomerData["data"]:GetItem(nIndexCustomer):cCpfCnpj
+		oCustomerJson["address"]              := oCustomerData["data"]:GetItem(nIndexCustomer):cAddress
+		oCustomerJson["neighborhood"]         := oCustomerData["data"]:GetItem(nIndexCustomer):cNeighborhood
+		oCustomerJson["state"]                := oCustomerData["data"]:GetItem(nIndexCustomer):cState
+		oCustomerJson["zip_code"]             := oCustomerData["data"]:GetItem(nIndexCustomer):cZipCode
+		oCustomerJson["city_id"]              := oCustomerData["data"]:GetItem(nIndexCustomer):cCityId
+		oCustomerJson["credit_limit"]         := oCustomerData["data"]:GetItem(nIndexCustomer):nCreditLimit
+		oCustomerJson["risk_level"]           := oCustomerData["data"]:GetItem(nIndexCustomer):cRiskLevel
+		oCustomerJson["complement"]           := oCustomerData["data"]:GetItem(nIndexCustomer):cComplement
+		oCustomerJson["ddd"]                  := oCustomerData["data"]:GetItem(nIndexCustomer):cDDD
+		oCustomerJson["phone"]                := oCustomerData["data"]:GetItem(nIndexCustomer):cPhone
+		oCustomerJson["city"]                 := oCustomerData["data"]:GetItem(nIndexCustomer):cCity
+		oCustomerJson["fax"]                  := oCustomerData["data"]:GetItem(nIndexCustomer):cFax
+		oCustomerJson["contact"]              := oCustomerData["data"]:GetItem(nIndexCustomer):cContact
+		oCustomerJson["billing_address"]      := oCustomerData["data"]:GetItem(nIndexCustomer):cBillingAddress
+		oCustomerJson["billing_state"]        := oCustomerData["data"]:GetItem(nIndexCustomer):cBillingState
+		oCustomerJson["billing_city"]         := oCustomerData["data"]:GetItem(nIndexCustomer):cBillingCity
+		oCustomerJson["billing_neighborhood"] := oCustomerData["data"]:GetItem(nIndexCustomer):cBillingNeighborhood
+		oCustomerJson["billing_zip_code"]     := oCustomerData["data"]:GetItem(nIndexCustomer):cBillingZipCode
+		oCustomerJson["is_taxpayer"]          := oCustomerData["data"]:GetItem(nIndexCustomer):lIsTaxpayer
+		oCustomerJson["is_zero_hunger"]       := oCustomerData["data"]:GetItem(nIndexCustomer):lIsZeroHunger
+		oCustomerJson["country_code"]         := oCustomerData["data"]:GetItem(nIndexCustomer):cCountryCode
+		oCustomerJson["state_inscription"]    := oCustomerData["data"]:GetItem(nIndexCustomer):cStateInscription
+		oCustomerJson["city_inscription"]     := oCustomerData["data"]:GetItem(nIndexCustomer):cCityInscription
+		oCustomerJson["email"]                := oCustomerData["data"]:GetItem(nIndexCustomer):cEmail
+
+		aAdd(aSanitizedModel, oCustomerJson)
+
+	next nIndexCustomer
+
+
+Return(aSanitizedModel)
+
