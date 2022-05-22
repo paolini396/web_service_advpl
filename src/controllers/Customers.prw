@@ -79,7 +79,14 @@ WSMethod GET WSService Customers
 
 		::SetStatus(400)
 
+	else 
+
+		::SetStatus(200)
+
 	endif
+	
+	::SetContentType("application/json; charset=UTF-8")
+	::SetResponse(oResponse:ToJson())
 
 	ErrorBlock(bError)
 

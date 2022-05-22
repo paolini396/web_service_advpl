@@ -100,8 +100,8 @@ Return
 
 Method SanitizeResponseToList(oCustomers as object) Class TCustomerModel
 
-	Local oCustomerJson := nil as object
-	Local nIndexCustomer :=  0 as numeric
+	Local oCustomerJson   := nil as object
+	Local nIndexCustomer  :=  0 as numeric
 
 	Local aSanitizedModel := {} as array
 
@@ -135,8 +135,8 @@ Return(aSanitizedModel)
 
 Method SanitizeResponseToShow(oCustomers as object) Class TCustomerModel
 
-	Local oCustomerJson := nil as object
-	Local nIndexCustomer :=  0 as numeric
+	Local oCustomerJson   := nil as object
+	Local nIndexCustomer  :=  0 as numeric
 
 	Local aSanitizedModel := {} as array
 
